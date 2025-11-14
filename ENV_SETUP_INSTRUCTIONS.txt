@@ -1,0 +1,56 @@
+================================================================================
+  .ENV FILE SETUP INSTRUCTIONS
+================================================================================
+
+To configure FFMPEG for MP3 downloads, you need to create a .env file in the
+project root directory.
+
+STEP 1: Create the .env file
+-----------------------------
+Create a new file named ".env" (without quotes) in:
+  C:\Users\userX\Documents\SpotifyAPItool\.env
+
+STEP 2: Add the following content to the file
+----------------------------------------------
+Copy and paste this into your .env file:
+
+# ============================================
+# ENVIRONMENT CONFIGURATION
+# ============================================
+
+# FFMPEG Configuration
+# Path to ffmpeg binary. Options:
+# - "ffmpeg" if ffmpeg is in your system PATH
+# - Full path to ffmpeg.exe (Windows): "C:\\path\\to\\ffmpeg\\bin\\ffmpeg.exe"
+# - Full path to ffmpeg (Mac/Linux): "/usr/local/bin/ffmpeg"
+FFMPEG_PATH=ffmpeg
+
+# Downloads Directory (optional, defaults to ./downloads)
+# DOWNLOADS_PATH=./downloads
+
+================================================================================
+
+STEP 3: Customize the FFMPEG_PATH
+----------------------------------
+Option A: If FFMPEG is in your system PATH (recommended)
+  Leave as: FFMPEG_PATH=ffmpeg
+
+Option B: If FFMPEG is installed in a specific location
+  Windows example: FFMPEG_PATH=C:\\ffmpeg\\bin\\ffmpeg.exe
+  Mac/Linux example: FFMPEG_PATH=/usr/local/bin/ffmpeg
+
+IMPORTANT: On Windows, use double backslashes (\\) in paths!
+
+================================================================================
+
+STEP 4: Save the file
+---------------------
+Save the .env file and restart your application.
+
+================================================================================
+
+For detailed FFMPEG installation instructions, see:
+  FFMPEG_SETUP.md
+
+================================================================================
+

@@ -64,6 +64,9 @@
             </span>
           </a>
         </th>
+        <th>
+          Download
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -75,6 +78,15 @@
           <td><%= track.name %></td>
           <td><%= track.album.name %></td>
           <td><%= artists %></td>
+          <td>
+            <a href="#" 
+               class="download-mp3-link" 
+               data-track="<%= track.name %>" 
+               data-artist="<%= artists %>"
+               onclick="downloadMP3(event, '<%= track.name %>', '<%= artists %>')">
+              🎵 MP3
+            </a>
+          </td>
         </tr>
       <% }); %>
     </tbody>

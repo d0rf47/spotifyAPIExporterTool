@@ -1,7 +1,6 @@
 // ============================================
 // SPOTIFY LIKED SONGS EXPORTER - WEB UI
 // ============================================
-// Organized structure with EJS templates
 
 const express = require('express');
 const path = require('path');

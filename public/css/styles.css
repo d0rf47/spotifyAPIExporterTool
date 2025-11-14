@@ -292,7 +292,7 @@ th.sortable a:hover {
 }
 
 .sort-icon {
-  font-size: 12px;
+  font-size: 14px;
   opacity: 0.7;
   transition: opacity 0.2s ease;
   min-width: 15px;
@@ -314,12 +314,26 @@ td:first-child {
   font-weight: 500;
 }
 
-tr:hover {
-  /* background: #f9f9f9; */
-}
-
 tr:last-child td {
   border-bottom: none;
+}
+
+/* MP3 Download Link */
+.download-mp3-link {
+  color: #1DB954;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 15px;
+  transition: all 0.2s ease;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.download-mp3-link:hover {
+  background: #1DB954;
+  color: white;
+  transform: scale(1.05);
 }
 
 /* ============================================

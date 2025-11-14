@@ -10,7 +10,8 @@ A beautiful, modern web application to export all your Spotify "Liked Songs" wit
 
 ### 🎨 Beautiful Web Interface
 - **Modern UI** - Clean, Spotify-themed design with gradient backgrounds
-- **Interactive Table** - View all your songs in a beautiful, scrollable table
+- **Interactive Table** - View all your songs in a beautiful, scrollable, sortable table
+- **Column Sorting** - Click any column header to sort by track name, album, or artist
 - **Responsive Design** - Works perfectly on desktop and mobile devices
 - **Real-time Progress** - Live updates as songs are being fetched
 
@@ -21,10 +22,11 @@ A beautiful, modern web application to export all your Spotify "Liked Songs" wit
 - **User-Initiated Export** - You control when to start fetching your songs
 
 ### 📊 Multiple Export Formats
-- **📄 Simple TXT** - Clean list format (Track - Artist)
-- **📋 Detailed TXT** - Complete information (album, duration, release date, popularity)
-- **📊 CSV** - Spreadsheet-compatible for data analysis
-- **🔗 Spotify URIs** - Track URIs for playlist import
+- **📄 Simple TXT** - Clean list format (Track - Artist) ✅ Always works
+- **📋 Detailed TXT** - Complete information (album, duration, release date, popularity) ✅ Always works
+- **📊 CSV** - Spreadsheet-compatible for data analysis ✅ Always works
+- **🔗 Spotify URIs** - Track URIs for playlist import ✅ Always works
+- **🎵 Individual MP3 Downloads** - Experimental feature, may not work due to YouTube restrictions ⚠️
 
 ### ⚡ Performance & Reliability
 - **Smart Pagination** - Handles libraries of any size (100, 1,000, 10,000+ songs)
@@ -44,6 +46,7 @@ A beautiful, modern web application to export all your Spotify "Liked Songs" wit
 - Node.js 18+ installed
 - A Spotify account
 - A Spotify Developer App (one-time setup)
+- **Optional:** FFMPEG (for MP3 download feature)
 
 ### Installation
 
@@ -79,17 +82,33 @@ A beautiful, modern web application to export all your Spotify "Liked Songs" wit
    }
    ```
 
-4. **Run the application**
+4. **(Optional) Setup FFMPEG for MP3 Downloads**
+   
+   If you want to download individual songs as MP3 files:
+   
+   a. Install FFMPEG (see [FFMPEG_SETUP.md](FFMPEG_SETUP.md) for detailed instructions)
+   
+   b. Create a `.env` file in the project root:
+   ```env
+   FFMPEG_PATH=ffmpeg
+   ```
+   
+   c. See [ENV_SETUP_INSTRUCTIONS.txt](ENV_SETUP_INSTRUCTIONS.txt) for detailed .env setup
+   
+   > **Note:** You can skip this step if you only want to export song lists (TXT/CSV formats)
+
+5. **Run the application**
    ```bash
    npm start
    ```
 
-5. **Use the app!**
+6. **Use the app!**
    - Browser opens automatically
    - Login with your Spotify account
    - Click "Start Export" button
-   - View your songs in a beautiful table
+   - View your songs in a beautiful, sortable table
    - Download in your preferred format
+   - **(Optional)** Click 🎵 MP3 on any song to download it
 
 ## 📖 Usage
 
@@ -114,12 +133,18 @@ A beautiful, modern web application to export all your Spotify "Liked Songs" wit
    - Scroll through your entire library
    - Sort and browse easily
 
-5. **Download**
-   - Choose your preferred format:
+5. **Sort and Browse**
+   - Click column headers to sort by track name, album, or artist
+   - Toggle between ascending and descending order
+   - All sorting happens instantly (no re-fetching)
+
+6. **Download**
+   - **Bulk Export** - Choose your preferred format:
      - 📄 **TXT** - Simple text list
      - 📊 **CSV** - Excel/spreadsheet format
      - 📋 **Detailed** - Complete song information
      - 🔗 **URIs** - Spotify track URIs
+   - **Individual Songs** - Click 🎵 MP3 on any song row to download that song as MP3
 
 ## 🏗️ Project Structure
 
@@ -150,7 +175,8 @@ SpotifyAPItool/
 ├── utils/               # Helper functions
 │   ├── pkce.js          # PKCE authentication helpers
 │   ├── spotify.js       # Spotify API utilities
-│   └── formatters.js    # Export format generators
+│   ├── formatters.js    # Export format generators
+│   └── youtube-downloader.js  # YouTube MP3 download utilities
 │
 └── server.js            # Main application entry point
 ```
@@ -186,6 +212,20 @@ See `PROJECT_STRUCTURE.md` for detailed guidance.
 
 ## 🔧 Configuration
 
+### FFMPEG Settings (for MP3 Downloads)
+
+Create a `.env` file in the project root:
+
+```env
+# Path to FFMPEG binary
+FFMPEG_PATH=ffmpeg
+
+# Optional: Custom downloads directory
+# DOWNLOADS_PATH=./downloads
+```
+
+**See [FFMPEG_SETUP.md](FFMPEG_SETUP.md) for complete FFMPEG installation and configuration guide.**
+
 ### Server Settings
 
 Edit `config/config.js`:
@@ -211,6 +251,11 @@ fetch: {
 - **`PROJECT_STRUCTURE.md`** - Complete project documentation
 - **`EJS_GUIDE.md`** - EJS templates reference
 - **`EJS_PARTIALS_GUIDE.md`** - Reusable components guide
+- **`LAYOUT_SYSTEM.md`** - Unified layout system documentation
+- **`FFMPEG_SETUP.md`** - FFMPEG installation and setup guide
+- **`ENV_SETUP_INSTRUCTIONS.txt`** - .env file configuration instructions
+- **`YTDL_MP3_USAGE.md`** - ytdl-mp3 correct usage guide ✨
+- **`YOUTUBE_403_ISSUE.md`** - YouTube download limitations and alternatives ⚠️
 
 ## 🛠️ Development
 
@@ -248,6 +293,15 @@ npm run dev     # Start development server with auto-reload
 - Change the port in `config/config.js`
 - Or stop the process using port 8888
 
+### MP3 Download not working (403 errors)
+- **This is a known limitation** - YouTube blocks automated downloads
+- See [YOUTUBE_403_ISSUE.md](YOUTUBE_403_ISSUE.md) for detailed explanation
+- **Recommended:** Use export features (TXT/CSV) and download songs manually
+- Make sure FFMPEG is installed: `ffmpeg -version`
+- Check your `.env` file has correct FFMPEG_PATH
+- Try different videos - some may work while others don't
+- See [FFMPEG_SETUP.md](FFMPEG_SETUP.md) for setup help
+
 ## 🔒 Privacy & Security
 
 - ✅ **No data stored** - Songs are fetched in memory only
@@ -259,10 +313,12 @@ npm run dev     # Start development server with auto-reload
 ## 🎯 Technical Stack
 
 - **Backend:** Node.js, Express.js
-- **Templating:** EJS (Embedded JavaScript)
+- **Templating:** EJS (Embedded JavaScript) with unified layout system
 - **Styling:** Pure CSS (no frameworks)
 - **API:** Spotify Web API Node.js wrapper
 - **Auth:** OAuth 2.0 with PKCE
+- **MP3 Downloads:** ytdl-mp3 with built-in conversion
+- **Config:** dotenv for environment variables
 
 ## 📝 Export Format Examples
 
