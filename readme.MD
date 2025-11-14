@@ -56,7 +56,7 @@ A beautiful, modern web application to export all your Spotify "Liked Songs" wit
 1. **Clone or download this repository**
 
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/d0rf47/spotifyAPIExporterTool
    cd SpotifyAPItool
    ```
 
