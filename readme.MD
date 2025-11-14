@@ -50,7 +50,6 @@ A beautiful, modern web application to export all your Spotify "Liked Songs" wit
 
 - Node.js 18+ installed
 - A Spotify account
-- A Spotify Developer App (one-time setup)
 
 ### Installation
 
@@ -67,36 +66,13 @@ A beautiful, modern web application to export all your Spotify "Liked Songs" wit
    npm install
    ```
 
-3. **Configure Spotify App** (One-time setup)
-
-   a. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-
-   b. Click "Create an App"
-
-   c. Fill in:
-
-   - App name: `Spotify Liked Songs Exporter`
-   - App description: `Export liked songs to various formats`
-   - Redirect URI: `http://127.0.0.1:8888/callback`
-
-   d. Copy your **Client ID**
-
-   e. Update `config/config.js`:
-
-   ```javascript
-   spotify: {
-     clientId: 'YOUR_CLIENT_ID_HERE',  // ← Paste your Client ID here
-     // ...
-   }
-   ```
-
-4. **Run the application**
+3. **Run the application**
 
    ```bash
    npm start
    ```
 
-5. **Use the app!**
+4. **Use the app!**
    - Browser opens automatically
    - Login with your Spotify account
    - Click "Start Export" button
@@ -256,16 +232,6 @@ npm run dev     # Start development server with auto-reload
 ```
 
 ## ❓ Troubleshooting
-
-### "Client ID not configured"
-
-- Update `config/config.js` with your Spotify Client ID
-- Make sure you created an app in Spotify Developer Dashboard
-
-### "Invalid redirect URI"
-
-- Add `http://127.0.0.1:8888/callback` to your Spotify app's redirect URIs
-- Use `127.0.0.1` (not `localhost`)
 
 ### Songs not loading
 
