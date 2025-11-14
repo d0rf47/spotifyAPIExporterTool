@@ -30,13 +30,23 @@ function setupAuthRoutes(spotifyApi, onSongsFetched, clearSongs) {
     
     // Handle error
     if (error) {
-      res.render('error', { errorMessage: error });
+      res.render('error', { 
+        errorMessage: error,
+        pageTitle: 'Authentication Failed',
+        bodyClass: 'centered',
+        containerClass: 'error-container'
+      });
       return;
     }
     
     // Handle missing code
     if (!code) {
-      res.render('error', { errorMessage: 'No authorization code received' });
+      res.render('error', { 
+        errorMessage: 'No authorization code received',
+        pageTitle: 'Authentication Failed',
+        bodyClass: 'centered',
+        containerClass: 'error-container'
+      });
       return;
     }
     
@@ -54,13 +64,33 @@ function setupAuthRoutes(spotifyApi, onSongsFetched, clearSongs) {
       spotifyApi.setRefreshToken(tokenData.refresh_token);
       
       // Send success page with button
-      res.render('success');
+      res.render('success', {
+        pageTitle: 'Authentication Successful',
+        bodyClass: 'centered',
+        containerClass: 'success-container',
+        flexWrapper: true,
+        extraScript: `
+          <script>
+            function startFetch() {
+              const btn = document.querySelector('.start-btn');
+              btn.disabled = true;
+              btn.textContent = 'Starting...';
+              window.location.href = '/start-fetch';
+            }
+          </script>
+        `
+      });
       
       console.log('✓ Authentication successful!');
       console.log('⏳ Waiting for user to start export...');
       
     } catch (error) {
-      res.render('error', { errorMessage: error.message });
+      res.render('error', { 
+        errorMessage: error.message,
+        pageTitle: 'Authentication Failed',
+        bodyClass: 'centered',
+        containerClass: 'error-container'
+      });
     }
   });
 

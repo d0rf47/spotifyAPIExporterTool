@@ -3,46 +3,51 @@
 // ============================================
 
 const config = require('../config/config');
-
+const allTracks = [];
 /**
  * Fetch all liked songs from Spotify with pagination
  * @param {SpotifyWebApi} spotifyApi - Initialized Spotify API instance
  * @returns {Promise<Array>} Array of all liked tracks
  */
 async function fetchAllLikedSongs(spotifyApi) {
-  const allTracks = [];
+  
   let offset = 0;
   const limit = config.fetch.limit;
   
-  try {
-    while (true) {
-      const data = await spotifyApi.getMySavedTracks({
-        limit: limit,
-        offset: offset
-      });
-      
-      const tracks = data.body.items;
-      allTracks.push(...tracks);
-      
-      // Progress indicator
-      process.stdout.write(`\r📊 Fetched ${allTracks.length} songs...`);
-      
-      // Check if there are more tracks
-      if (tracks.length < limit) {
-        break;
+  if(allTracks.length === 0 ) {
+    try {
+      while (true) {
+        const data = await spotifyApi.getMySavedTracks({
+          limit: limit,
+          offset: offset
+        });
+        
+        const tracks = data.body.items;
+        allTracks.push(...tracks);
+        
+        // Progress indicator
+        process.stdout.write(`\r📊 Fetched ${allTracks.length} songs...`);
+        
+        // Check if there are more tracks
+        if (tracks.length < limit) {
+          break;
+        }
+        
+        offset += limit;
+        
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, config.fetch.delayMs));
       }
-      
-      offset += limit;
-      
-      // Small delay to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, config.fetch.delayMs));
-    }
     
     return allTracks;
     
   } catch (error) {
     throw new Error(`Failed to fetch liked songs: ${error.message}`);
   }
+  }else {
+    return allTracks;
+  }
+  
 }
 
 /**

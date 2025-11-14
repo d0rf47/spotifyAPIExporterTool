@@ -270,6 +270,39 @@ th:first-child {
   text-align: center;
 }
 
+/* Sortable Column Styles */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.sortable a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  transition: opacity 0.2s ease;
+}
+
+th.sortable a:hover {
+  opacity: 0.8;
+}
+
+.sort-icon {
+  font-size: 12px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  min-width: 15px;
+  text-align: center;
+}
+
+th.sortable a:hover .sort-icon {
+  opacity: 1;
+}
+
 td {
   padding: 12px 15px;
   border-bottom: 1px solid #f0f0f0;
@@ -282,7 +315,7 @@ td:first-child {
 }
 
 tr:hover {
-  background: #f9f9f9;
+  /* background: #f9f9f9; */
 }
 
 tr:last-child td {
@@ -323,15 +356,15 @@ tr:last-child td {
 }
 
 /* Footer for pages with white background */
-.results-page .app-footer {
-      color: white;
-      margin-top: 0;
-      padding-top: 30px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-}
+/* .results-page .app-footer {
+  color: white;
+  margin-top: 0;
+  padding-top: 30px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+} */
 
 /* ============================================
    RESPONSIVE DESIGN

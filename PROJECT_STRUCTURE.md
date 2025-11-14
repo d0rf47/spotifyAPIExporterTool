@@ -13,13 +13,12 @@ SpotifyAPItool/
 │   └── formatters.js          # Content formatters (TXT, CSV, etc.)
 │
 ├── views/
-│   ├── partials/              # Reusable components
-│   │   ├── header.ejs         # Common header (DOCTYPE, meta, CSS links)
-│   │   └── footer.ejs         # Common footer (closing tags, links)
-│   ├── success.ejs            # Authentication success page template
-│   ├── error.ejs              # Error page template
-│   ├── loading.ejs            # Loading page with spinner
-│   └── results.ejs            # Results page with HTML table
+│   ├── layout.ejs             # Unified layout template (header, footer, structure)
+│   └── content/               # Page-specific content (injected into layout)
+│       ├── success.ejs        # Authentication success content
+│       ├── error.ejs          # Error page content
+│       ├── loading.ejs        # Loading page content
+│       └── results.ejs        # Results table content
 │
 ├── routes/
 │   ├── auth.js                # Authentication routes & flow
@@ -75,28 +74,46 @@ SpotifyAPItool/
 
 ### Views (`views/`)
 
-**All view files use EJS (Embedded JavaScript Templates)**
+**Unified Layout System with EJS Templates**
 
-- Clean HTML with embedded JavaScript
-- Syntax highlighting in editors
-- Easy to customize
-- Industry standard templating
-- Use external CSS and JS files
+- **layout.ejs** - Master template with header, footer, and structure
+- **content/** - Page-specific content injected into layout
+- Automatic layout rendering via middleware
+- Consistent structure across all pages
+- Clean separation of layout and content
 
-**`partials/header.ejs`** - Reusable header component (DOCTYPE, meta, CSS)
-**`partials/footer.ejs`** - Reusable footer component (closing tags, links)
+**How It Works:**
 
-**`success.ejs`** - Shows "Authentication Successful" with auto-redirect
-**`error.ejs`** - Shows authentication errors
-**`loading.ejs`** - Animated spinner with progress checking
-**`results.ejs`** - Beautiful HTML table with all songs
+1. Routes render content templates: `res.render('success', options)`
+2. Middleware automatically wraps content in layout
+3. Layout receives content as `body` variable
+4. Options passed to render control layout behavior
 
-All pages use partials for consistent structure:
-```ejs
-<%- include('partials/header', { pageTitle: 'My Page' }) %>
-<body>
-  <!-- Page content -->
-<%- include('partials/footer') %>
+**Layout Options:**
+- `pageTitle` - Page title (default: "Spotify Liked Songs Exporter")
+- `bodyClass` - CSS class for body tag (e.g., "centered", "results-page")
+- `containerClass` - CSS class for container div
+- `extraHead` - Additional head content (scripts, meta tags)
+- `extraScript` - Additional scripts before closing body tag
+- `flexWrapper` - Adds flex wrapper div (for vertical centering)
+
+**Content Templates:**
+
+**`content/success.ejs`** - Authentication success with "Start Export" button
+**`content/error.ejs`** - Error messages
+**`content/loading.ejs`** - Loading spinner with progress
+**`content/results.ejs`** - Interactive song table with download buttons
+
+**Example Usage:**
+```javascript
+// In routes
+res.render('success', {
+  pageTitle: 'Authentication Successful',
+  bodyClass: 'centered',
+  containerClass: 'success-container',
+  flexWrapper: true,
+  extraScript: '<script>...</script>'
+});
 ```
 
 ### Public Assets (`public/`)

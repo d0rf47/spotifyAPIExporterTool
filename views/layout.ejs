@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Spotify Liked Songs Exporter' %></title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <% if (typeof extraHead !== 'undefined') { %>
+    <%- extraHead %>
+  <% } %>
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+  <% if (typeof flexWrapper !== 'undefined' && flexWrapper) { %>
+    <div style="flex-grow:1">
+  <% } %>
+  
+  <div class="container <%= typeof containerClass !== 'undefined' ? containerClass : '' %>">
+    <%- body %>
+  </div>
+  
+  <% if (typeof flexWrapper !== 'undefined' && flexWrapper) { %>
+    </div>
+  <% } %>
+  
+  <% if (typeof extraScript !== 'undefined') { %>
+    <%- extraScript %>
+  <% } %>
+  
+  <footer class="app-footer">
+    <p>Made with 🎵 using Spotify Web API</p>
+    <p class="footer-links">
+      <a href="https://developer.spotify.com" target="_blank">Spotify Developer</a> • 
+      <a href="https://github.com" target="_blank">GitHub</a>
+    </p>
+  </footer>
+</body>
+</html>
+

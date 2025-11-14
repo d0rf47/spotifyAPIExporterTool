@@ -21,6 +21,32 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Add layout rendering middleware
+app.use((req, res, next) => {
+  // Store the original render function
+  const originalRender = res.render.bind(res);
+  
+  // Override res.render to use layout
+  res.render = (view, options = {}, callback) => {
+    // Render the content view first
+    app.render(`content/${view}`, options, (err, html) => {
+      if (err) {
+        return callback ? callback(err) : next(err);
+      }
+      
+      // Now render the layout with the content
+      const layoutData = {
+        body: html,
+        ...options
+      };
+      
+      originalRender('layout', layoutData, callback);
+    });
+  };
+  
+  next();
+});
+
 // Initialize Spotify API
 const spotifyApi = new SpotifyWebApi({
   clientId: config.spotify.clientId,

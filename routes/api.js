@@ -33,7 +33,12 @@ function clearFetchedSongs() {
 
 // Loading page route
 router.get('/loading', (req, res) => {
-  res.render('loading');
+  res.render('loading', {
+    pageTitle: 'Loading Songs...',
+    bodyClass: 'centered',
+    containerClass: 'loading-container',
+    extraHead: '<script src="/js/loading.js" defer></script>'
+  });
 });
 
 // API endpoint to check if songs are loaded
@@ -44,16 +49,56 @@ router.get('/api/songs/status', (req, res) => {
   });
 });
 
-// Results page route
+// Results page route with sorting
 router.get('/results', (req, res) => {
   if (fetchedSongs.length === 0) {
     res.redirect('/loading');
     return;
   }
 
+  // Get sort parameters from query string
+  const sortBy = req.query.sortBy || 'index'; // default: original order
+  const sortOrder = req.query.sortOrder || 'asc'; // default: ascending
+  
+  // Create a copy of songs to sort (don't mutate original)
+  let sortedSongs = [...fetchedSongs];
+  
+  // Sort the songs based on the selected column
+  if (sortBy !== 'index') {
+    sortedSongs.sort((a, b) => {
+      let valueA, valueB;
+      
+      switch (sortBy) {
+        case 'track':
+          valueA = a.track.name.toLowerCase();
+          valueB = b.track.name.toLowerCase();
+          break;
+        case 'album':
+          valueA = a.track.album.name.toLowerCase();
+          valueB = b.track.album.name.toLowerCase();
+          break;
+        case 'artist':
+          valueA = a.track.artists[0].name.toLowerCase();
+          valueB = b.track.artists[0].name.toLowerCase();
+          break;
+        default:
+          return 0;
+      }
+      
+      // Compare values
+      if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
+      if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
   res.render('results', { 
-    songs: fetchedSongs,
-    exportDate: new Date().toLocaleString()
+    songs: sortedSongs,
+    exportDate: new Date().toLocaleString(),
+    pageTitle: 'Your Spotify Liked Songs',
+    bodyClass: 'results-page',
+    containerClass: 'results-container',
+    currentSort: { by: sortBy, order: sortOrder }
   });
 });
 
