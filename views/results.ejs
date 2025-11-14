@@ -1,0 +1,40 @@
+<%- include('partials/header', { pageTitle: 'Your Spotify Liked Songs' }) %>
+<body class="results-page">
+  <div class="container results-container">
+    <h1>🎵 Your Spotify Liked Songs</h1>
+    <div class="stats">
+      Total Songs: <strong><%= songs.length %></strong>
+    </div>
+    <p class="subtitle">Exported on <%= exportDate %></p>
+    
+    <div class="download-section">
+      <a href="/download/txt" class="download-btn" download>📄 Download TXT</a>
+      <a href="/download/csv" class="download-btn" download>📊 Download CSV</a>
+      <a href="/download/detailed" class="download-btn" download>📋 Download Detailed</a>
+      <a href="/download/uris" class="download-btn" download>🔗 Download URIs</a>
+    </div>
+    
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Track Name</th>
+            <th>Artist(s)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% songs.forEach((item, index) => { %>
+            <% const track = item.track; %>
+            <% const artists = track.artists.map(artist => artist.name).join(', '); %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= track.name %></td>
+              <td><%= artists %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<%- include('partials/footer') %>
