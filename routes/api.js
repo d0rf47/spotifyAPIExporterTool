@@ -98,7 +98,19 @@ router.get('/results', (req, res) => {
     pageTitle: 'Your Spotify Liked Songs',
     bodyClass: 'results-page',
     containerClass: 'results-container',
-    currentSort: { by: sortBy, order: sortOrder }
+    currentSort: { by: sortBy, order: sortOrder },
+    extraScript: '<script src="/js/cache-manager.js"></script><script src="/js/save-to-cache.js"></script>'
+  });
+});
+
+// Cached results page route - displays songs from client-side localStorage
+router.get('/cached-results', (req, res) => {
+  // Render a page that will load and display cached songs using JavaScript
+  res.render('cached-results', {
+    pageTitle: 'Your Cached Spotify Songs',
+    bodyClass: 'results-page',
+    containerClass: 'results-container',
+    extraScript: '<script src="/js/cache-manager.js"></script><script src="/js/load-cached.js"></script>'
   });
 });
 

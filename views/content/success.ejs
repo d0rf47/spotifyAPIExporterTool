@@ -1,10 +1,72 @@
 <h1>✓ Authentication Successful!</h1>
-<p>You're all set! Ready to export your liked songs?</p>
+<p id="main-message">You're all set! Ready to export your liked songs?</p>
+
+<!-- Cache info display -->
+<div id="cache-info" class="info-box" style="display: none; margin-bottom: 20px;">
+  <p class="info-text">💾 <strong>Previous Export Found</strong></p>
+  <p class="info-subtext" id="cache-details"></p>
+</div>
+
 <div class="info-box">
   <p class="info-text">🎵 We'll fetch all your liked songs from Spotify</p>
   <p class="info-subtext">This may take a moment for large libraries</p>
 </div>
-<button class="start-btn" onclick="startFetch()">
-  Start Export
-</button>
+
+<!-- Action buttons -->
+<div id="button-container">
+  <!-- Buttons will be dynamically inserted here -->
+</div>
+
+<script src="/js/cache-manager.js"></script>
+<script>
+  // Check for cached data on page load
+  window.addEventListener('DOMContentLoaded', function() {
+    const cacheInfo = getCacheInfo();
+    const buttonContainer = document.getElementById('button-container');
+    
+    if (cacheInfo) {
+      // Show cache info
+      const cacheInfoBox = document.getElementById('cache-info');
+      const cacheDetails = document.getElementById('cache-details');
+      cacheInfoBox.style.display = 'block';
+      cacheDetails.textContent = `${cacheInfo.count} songs saved on ${cacheInfo.formattedDate}`;
+      
+      // Show two buttons: View Cached & Fetch Fresh
+      buttonContainer.innerHTML = `
+        <button class="start-btn" onclick="viewCachedSongs()" style="margin-right: 10px;">
+          📚 View Cached Songs
+        </button>
+        <button class="start-btn secondary-btn" onclick="fetchFreshSongs()">
+          🔄 Fetch Fresh Songs
+        </button>
+      `;
+    } else {
+      // Show single button: Fetch Songs
+      buttonContainer.innerHTML = `
+        <button class="start-btn" onclick="fetchFreshSongs()">
+          🎵 Fetch Songs
+        </button>
+      `;
+    }
+  });
+  
+  function fetchFreshSongs() {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = 'Starting...';
+    window.location.href = '/start-fetch';
+  }
+  
+  function viewCachedSongs() {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = 'Loading...';
+    window.location.href = '/cached-results';
+  }
+  
+  // Legacy function for backward compatibility
+  function startFetch() {
+    fetchFreshSongs();
+  }
+</script>
 

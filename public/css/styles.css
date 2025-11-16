@@ -139,6 +139,16 @@ body.centered {
   box-shadow: none;
 }
 
+.start-btn.secondary-btn {
+  background: #535353;
+  box-shadow: 0 4px 6px rgba(83, 83, 83, 0.3);
+}
+
+.start-btn.secondary-btn:hover:not(:disabled) {
+  background: #666;
+  box-shadow: 0 6px 12px rgba(83, 83, 83, 0.4);
+}
+
 /* ============================================
    ERROR PAGE
    ============================================ */
@@ -206,6 +216,25 @@ body.results-page {
 .stats strong {
   color: #1DB954;
   font-size: 24px;
+}
+
+.cache-status-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 15px;
+}
+
+.cache-status-badge.fresh {
+  background: #1DB954;
+  color: white;
+}
+
+.cache-status-badge.cached {
+  background: #535353;
+  color: white;
 }
 
 /* Download Buttons */

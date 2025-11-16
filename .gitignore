@@ -8,6 +8,10 @@ node_modules/
 spotify_liked_songs_*.txt
 spotify_liked_songs_*.csv
 
+# Downloaded MP3 files
+downloads/
+*.mp3
+
 # Logs
 *.log
 npm-debug.log*
