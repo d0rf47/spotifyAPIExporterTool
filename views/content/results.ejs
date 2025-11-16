@@ -1,95 +1,192 @@
-<h1>🎵 Your Spotify Liked Songs</h1>
-<div class="stats">
-  Total Songs: <strong><%= songs.length %></strong>
-</div>
-<p class="subtitle">Exported on <%= exportDate %></p>
+<% 
+  // Check if this is cached data view (will be set to false for fresh data)
+  const isCached = typeof cached !== 'undefined' && cached === true;
+  const hasSongs = typeof songs !== 'undefined' && songs && songs.length > 0;
+%>
 
-<div class="download-section">
-  <a href="/download/txt" class="download-btn" download>📄 Download TXT</a>
-  <a href="/download/csv" class="download-btn" download>📊 Download CSV</a>
-  <a href="/download/detailed" class="download-btn" download>📋 Download Detailed</a>
-  <a href="/download/uris" class="download-btn" download>🔗 Download URIs</a>
+<% if (isCached) { %>
+<!-- Loading message for cached data -->
+<div id="loading-message" style="text-align: center; padding: 40px;">
+  <div class="spinner" style="margin: 0 auto;"></div>
+  <p style="margin-top: 20px; color: #666;">Loading cached songs...</p>
 </div>
 
-<div class="table-container">
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th class="sortable">
-          <a href="/results?sortBy=track&sortOrder=<%= (currentSort.by === 'track' && currentSort.order === 'asc') ? 'desc' : 'asc' %>">
-            Track Name
-            <span class="sort-icon">
-              <% if (currentSort.by === 'track') { %>
-                <% if (currentSort.order === 'asc') { %>
-                  ▲
-                <% } else { %>
-                  ▼
-                <% } %>
-              <% } else { %>
-                ⇅
-              <% } %>
-            </span>
-          </a>
-        </th>
-        <th class="sortable">
-          <a href="/results?sortBy=album&sortOrder=<%= (currentSort.by === 'album' && currentSort.order === 'asc') ? 'desc' : 'asc' %>">
-            Album
-            <span class="sort-icon">
-              <% if (currentSort.by === 'album') { %>
-                <% if (currentSort.order === 'asc') { %>
-                  ▲
-                <% } else { %>
-                  ▼
-                <% } %>
-              <% } else { %>
-                ⇅
-              <% } %>
-            </span>
-          </a>
-        </th>
-        <th class="sortable">
-          <a href="/results?sortBy=artist&sortOrder=<%= (currentSort.by === 'artist' && currentSort.order === 'asc') ? 'desc' : 'asc' %>">
-            Artist(s)
-            <span class="sort-icon">
-              <% if (currentSort.by === 'artist') { %>
-                <% if (currentSort.order === 'asc') { %>
-                  ▲
-                <% } else { %>
-                  ▼
-                <% } %>
-              <% } else { %>
-                ⇅
-              <% } %>
-            </span>
-          </a>
-        </th>
-        <th>
-          Download
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <% songs.forEach((item, index) => { %>
-        <% const track = item.track; %>
-        <% const artists = track.artists.map(artist => artist.name).join(', '); %>
+<!-- Error message for no cached data -->
+<div id="error-message" style="display: none; text-align: center; padding: 40px;">
+  <h2 style="color: #ff0000;">❌ No Cached Data Found</h2>
+  <p style="color: #666; margin: 20px 0;">You haven't fetched any songs yet.</p>
+  <button class="start-btn" onclick="window.location.href='/refresh'">
+    🎵 Fetch Songs Now
+  </button>
+</div>
+<% } %>
+
+<!-- Results content -->
+<div id="results-content"<% if (isCached) { %> style="display: none;"<% } %>>
+  <h1>🎵 Your Spotify Liked Songs</h1>
+  
+  <div class="stats">
+    Total Songs: <strong<% if (isCached) { %> id="song-count"<% } %>><%= hasSongs ? songs.length : 0 %></strong>
+    <% if (isCached) { %>
+    <span class="cache-status-badge cached">💾 From Cache</span>
+    <% } else if (hasSongs) { %>
+    <span class="cache-status-badge fresh">🔄 Fresh Data</span>
+    <% } %>
+  </div>
+  
+  <p class="subtitle"<% if (isCached) { %> id="export-date"<% } %>><%= typeof exportDate !== 'undefined' ? exportDate : '' %></p>
+  
+  <% if (isCached) { %>
+  <!-- Action buttons for cached view -->
+  <div class="action-buttons" style="margin-bottom: 20px;">
+    <button class="start-btn" onclick="refreshData()" style="margin-right: 10px;">
+      🔄 Refresh Data
+    </button>
+    <button class="start-btn secondary-btn" onclick="clearCacheAndRefresh()">
+      🗑️ Clear Cache
+    </button>
+  </div>
+  <% } %>
+  
+  <!-- Download buttons -->
+  <div class="download-section">
+    <% if (isCached) { %>
+      <a href="#" class="download-btn" onclick="event.preventDefault(); downloadAsFormat('txt');">📄 Download TXT</a>
+      <a href="#" class="download-btn" onclick="event.preventDefault(); downloadAsFormat('csv');">📊 Download CSV</a>
+      <a href="#" class="download-btn" onclick="event.preventDefault(); downloadAsFormat('detailed');">📋 Download Detailed</a>
+      <a href="#" class="download-btn" onclick="event.preventDefault(); downloadAsFormat('uris');">🔗 Download URIs</a>
+    <% } else { %>
+      <a href="/download/txt" class="download-btn">📄 Download TXT</a>
+      <a href="/download/csv" class="download-btn">📊 Download CSV</a>
+      <a href="/download/detailed" class="download-btn">📋 Download Detailed</a>
+      <a href="/download/uris" class="download-btn">🔗 Download URIs</a>
+    <% } %>
+  </div>
+
+  <!-- Songs table -->
+  <div class="table-container">
+    <table>
+      <thead>
         <tr>
-          <td><%= index + 1 %></td>
-          <td><%= track.name %></td>
-          <td><%= track.album.name %></td>
-          <td><%= artists %></td>
-          <td>
-            <a href="#" 
-               class="download-mp3-link" 
-               data-track="<%= track.name %>" 
-               data-artist="<%= artists %>"
-               onclick="downloadMP3(event, '<%= track.name %>', '<%= artists %>')">
-              🎵 MP3
-            </a>
-          </td>
+          <th>#</th>
+          <% if (isCached) { %>
+            <!-- Client-side sorting for cached data -->
+            <th class="sortable" onclick="sortTable('track')">
+              Track Name
+              <span class="sort-icon">⇅</span>
+            </th>
+            <th class="sortable" onclick="sortTable('album')">
+              Album
+              <span class="sort-icon">⇅</span>
+            </th>
+            <th class="sortable" onclick="sortTable('artist')">
+              Artist(s)
+              <span class="sort-icon">⇅</span>
+            </th>
+          <% } else { %>
+            <!-- Server-side sorting for fresh data -->
+            <th class="sortable">
+              <a href="/results?sortBy=track&sortOrder=<%= (currentSort.by === 'track' && currentSort.order === 'asc') ? 'desc' : 'asc' %>">
+                Track Name
+                <span class="sort-icon">
+                  <% if (currentSort.by === 'track') { %>
+                    <%= currentSort.order === 'asc' ? '▲' : '▼' %>
+                  <% } else { %>
+                    ⇅
+                  <% } %>
+                </span>
+              </a>
+            </th>
+            <th class="sortable">
+              <a href="/results?sortBy=album&sortOrder=<%= (currentSort.by === 'album' && currentSort.order === 'asc') ? 'desc' : 'asc' %>">
+                Album
+                <span class="sort-icon">
+                  <% if (currentSort.by === 'album') { %>
+                    <%= currentSort.order === 'asc' ? '▲' : '▼' %>
+                  <% } else { %>
+                    ⇅
+                  <% } %>
+                </span>
+              </a>
+            </th>
+            <th class="sortable">
+              <a href="/results?sortBy=artist&sortOrder=<%= (currentSort.by === 'artist' && currentSort.order === 'asc') ? 'desc' : 'asc' %>">
+                Artist(s)
+                <span class="sort-icon">
+                  <% if (currentSort.by === 'artist') { %>
+                    <%= currentSort.order === 'asc' ? '▲' : '▼' %>
+                  <% } else { %>
+                    ⇅
+                  <% } %>
+                </span>
+              </a>
+            </th>
+          <% } %>
+          <th>Download</th>
         </tr>
-      <% }); %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody<% if (isCached) { %> id="songs-table-body"<% } %>>
+        <% if (!isCached && hasSongs) { %>
+          <!-- Server-side rendered songs for fresh data -->
+          <% songs.forEach((item, index) => { %>
+            <% const track = item.track; %>
+            <% const artists = track.artists.map(artist => artist.name).join(', '); %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= track.name %></td>
+              <td><%= track.album.name %></td>
+              <td><%= artists %></td>
+              <td>
+                <a href="#" 
+                   class="download-mp3-link" 
+                   data-track="<%= track.name %>" 
+                   data-artist="<%= artists %>"
+                   onclick="downloadMP3(event, '<%= track.name %>', '<%= artists %>')">
+                  🎵 MP3
+                </a>
+              </td>
+            </tr>
+          <% }); %>
+        <% } else if (isCached) { %>
+          <!-- Client-side rendered songs for cached data (populated by JS) -->
+        <% } %>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<script>
+  // Stub function for MP3 downloads (functionality removed)
+  function downloadMP3(event, trackName, artistName) {
+    event.preventDefault();
+    alert('MP3 download functionality has been removed.');
+  }
+</script>
+
+<% if (isCached) { %>
+<!-- Client-side scripts for cached view -->
+<script>
+  function refreshData() {
+    // Use the refresh route instead of forcing re-authentication
+    window.location.href = '/refresh';
+  }
+  
+  function clearCacheAndRefresh() {
+    if (confirm('Are you sure you want to clear the cache?')) {
+      clearCache();
+      // Use the refresh route to fetch new data
+      window.location.href = '/refresh';
+    }
+  }
+  
+  function downloadAsFormat(format) {
+    alert('To download files, please refresh your data from Spotify first.');
+  }
+  
+  function sortTable(column) {
+    // Sorting is implemented in load-cached.js
+    console.log('Sort by:', column);
+  }
+</script>
+<% } %>
 

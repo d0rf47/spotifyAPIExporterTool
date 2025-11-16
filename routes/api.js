@@ -99,17 +99,19 @@ router.get('/results', (req, res) => {
     bodyClass: 'results-page',
     containerClass: 'results-container',
     currentSort: { by: sortBy, order: sortOrder },
+    cached: false, // Explicitly mark as fresh data
     extraScript: '<script src="/js/cache-manager.js"></script><script src="/js/save-to-cache.js"></script>'
   });
 });
 
 // Cached results page route - displays songs from client-side localStorage
 router.get('/cached-results', (req, res) => {
-  // Render a page that will load and display cached songs using JavaScript
-  res.render('cached-results', {
+  // Render the unified results template with cached flag set to true
+  res.render('results', {
     pageTitle: 'Your Cached Spotify Songs',
     bodyClass: 'results-page',
     containerClass: 'results-container',
+    cached: true, // Flag to indicate this is cached data view
     extraScript: '<script src="/js/cache-manager.js"></script><script src="/js/load-cached.js"></script>'
   });
 });

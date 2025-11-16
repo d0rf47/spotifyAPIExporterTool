@@ -23,6 +23,25 @@ let pkceData = null;
  * @param {Function} clearSongs - Callback to clear existing songs
  */
 function setupAuthRoutes(spotifyApi, onSongsFetched, clearSongs) {
+  // Root route - start authentication
+  router.get('/', (req, res) => {
+    // Generate new PKCE pair
+    pkceData = generatePKCEPair();
+    
+    // Create authorization URL
+    const authUrl = createAuthorizationURL(
+      config.spotify.clientId,
+      config.spotify.redirectUri,
+      config.spotify.scopes,
+      pkceData.challenge
+    );
+    
+    console.log('🔐 Starting authentication process (PKCE) from root route...');
+    
+    // Redirect to Spotify authorization
+    res.redirect(authUrl);
+  });
+
   // Callback route
   router.get('/callback', async (req, res) => {
     const code = req.query.code;
@@ -113,6 +132,48 @@ function setupAuthRoutes(spotifyApi, onSongsFetched, clearSongs) {
       })
       .catch(err => {
         console.error('Error fetching songs:', err.message);
+      });
+  });
+
+  // Refresh route - re-fetch data without re-authenticating
+  router.get('/refresh', async (req, res) => {
+    console.log('🔄 User requested data refresh...');
+    
+    // Check if we have valid tokens
+    const accessToken = spotifyApi.getAccessToken();
+    
+    if (!accessToken) {
+      console.log('⚠️ No access token found, redirecting to authentication...');
+      // Generate new PKCE pair and redirect to auth
+      pkceData = generatePKCEPair();
+      const authUrl = createAuthorizationURL(
+        config.spotify.clientId,
+        config.spotify.redirectUri,
+        config.spotify.scopes,
+        pkceData.challenge
+      );
+      return res.redirect(authUrl);
+    }
+    
+    // Clear any existing songs
+    clearSongs();
+    
+    // Redirect to loading page immediately
+    res.redirect('/loading');
+    
+    // Fetch songs in background using existing tokens
+    fetchAllLikedSongs(spotifyApi)
+      .then(songs => {
+        onSongsFetched(songs);
+        console.log(`✓ Refreshed ${songs.length} liked songs!`);
+        console.log('🌐 View results at: http://127.0.0.1:8888/results');
+      })
+      .catch(err => {
+        console.error('Error refreshing songs:', err.message);
+        // If error is due to expired token, user will need to re-authenticate
+        if (err.message.includes('token') || err.message.includes('auth')) {
+          console.log('⚠️ Token may be expired. User will need to re-authenticate.');
+        }
       });
   });
 
